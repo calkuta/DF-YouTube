@@ -1,0 +1,46 @@
+.ad-div {
+  display: none; }
+
+#player-api {
+  width: 854px;
+  height: 510px; }
+
+#player {
+  width: 854px !important;
+  min-width: 854px !important;
+  max-width: 854px !important; }
+
+video {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important; }
+
+#watch7-sidebar {
+  margin-top: 0 !important;
+  top: 0 !important; }
+
+.ad-container-single-media-element {
+  width: 100% !important; }
+
+.controls a {
+  opacity: 0.5;
+  display: none !important; }
+.controls .image-container {
+  opacity: 0.5;
+  display: none !important; }
+.controls .flash-container {
+  opacity: 0.5;
+  display: none !important; }
+.controls .close-padding {
+  opacity: 0.5;
+  display: none !important; }
+.controls .text-container {
+  opacity: 0.5;
+  display: none !important; }
+
+#theater-background {
+  height: 510px !important;
+  background-color: #000 !important; }
+
+/*# sourceMappingURL=df_youtube.css.map */

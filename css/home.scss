@@ -1,0 +1,142 @@
+// MODULE RULES
+.setActive {
+	text-align: center;
+
+	span {
+		display: inline-block;
+		border-radius: 0.75rem;
+		width: 9rem;
+		box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.3);
+	}
+}
+
+.icon-uniE602:before {
+	content: "\e602";
+}
+.icon-uniE600:before {
+	content: "\e600";
+}
+.icon-uniE601:before {
+	content: "\e601";
+}
+
+.toggleOptions {
+	cursor: pointer;
+	
+	span {
+		font-family: "Courier New", Courier, monospace;
+	}
+}
+
+.leaveFeedback {
+	font-size: 1.2rem;
+
+	a {
+		display: inline-block;
+		padding: 0.5rem;
+		border-radius: 0.5rem;
+		color: black !important;
+
+		&:hover {
+			background-color: #ddd;
+		}
+	}
+
+	span {
+		font-size: 1.75rem;
+	}
+}
+
+.options {
+	// background-color: #ddd;
+	border: 1px solid black;
+	padding: 0.5rem;
+
+	& > div:last-child {
+		margin-bottom: 0;
+	}
+
+	.option {
+		cursor: pointer;
+
+		&[data-option=disablePlaylists] {
+			margin-bottom: 0;
+		}
+
+		// &[data-option=applyInstantly] {
+		// 	margin-bottom: 0;
+		// }
+
+		& > .checkBox:before {
+			content: "\e600";
+		}
+
+		.subOption {
+			padding-top: 0.5rem;
+			display: none;
+			margin-bottom: 0;
+
+			& > .option {
+				margin-bottom: 0;
+			}
+		}
+
+		&.checked {
+			.subOption {
+				display: block;
+			}
+
+			& > .checkBox:before {
+				content: "\e601";
+			}
+		}
+	}
+
+	.subOption {
+		margin-left: 2rem;
+	}
+
+	.checkBox {
+		display: inline-block;
+		margin-right: 0.5rem;
+		font-size: 1.25em;
+		line-height: 1em;
+		vertical-align: top;
+	}
+
+	.description {
+		display: inline-block;
+		vertical-align: top;
+		line-height: 1.25em;
+	}
+}
+
+.refresh {
+	display: none;
+	margin-top: 1rem;
+	background-color: white;
+	text-align: center;
+	// color: #555;
+	background-color: #bebebe;
+	padding: 0.7rem 0;
+}
+
+.donate {
+	div {
+		line-height: 1.5em;
+		margin-bottom: 0.5rem;
+	}
+
+	.prettyBlueButton {
+		color: white;
+		width: 9rem;
+		font-size: 1.1rem;
+		padding: 0.5em 1em;
+		border-radius: 0.75rem;
+		box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.3);
+
+		:hover {
+			color: white;
+		}
+	}
+}

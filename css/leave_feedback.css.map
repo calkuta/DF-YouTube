@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AACC,sBAAQ;EACP,KAAK,EAAE,IAAI;EACX,OAAO,EAAE,KAAK;EACd,WAAW,EAAE,IAAI;EACjB,YAAY,EAAE,IAAI",
+"sources": ["leave_feedback.scss"],
+"names": [],
+"file": "leave_feedback.css"
+}
