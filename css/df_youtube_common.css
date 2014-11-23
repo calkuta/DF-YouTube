@@ -1,5 +1,5 @@
-#feed, #watch7-container, #footer-container {
-  display: none !important; }
+#feed, #watch7-container {
+  display: none; }
 
 #watch7-container, #footer-container {
   -webkit-transform: translate3d(0, 0, 0);

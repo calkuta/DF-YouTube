@@ -27,16 +27,27 @@ function initiate(pageUpdated)
 {
 	pageUpdated = typeof pageUpdated === 'undefined' ? false : pageUpdated;
 
-	var body = document.querySelector('body'),
+	var timeInterval = 500,
+		time = 0,
+		body = document.querySelector('body');
+
+	setTimeout(function() {
 		checkReady = setInterval(function() {
-		if (document.readyState === 'complete' &&
-			body.className.search('page-loaded') >= 0
-		)
-		{
-			clearInterval(checkReady);
-			df_youtube(pageUpdated);
-		}
-	}, 500);
+			if (document.readyState === 'complete' &&
+				body.className.search('page-loaded') >= 0 ||
+				time > 3000
+			)
+			{
+				console.log('starting up');
+				clearInterval(checkReady);
+				df_youtube(pageUpdated);
+			}
+			else
+			{
+				time += timeInterval;
+			}
+		}, timeInterval);
+	}, timeInterval);
 }
 
 function df_youtube(pageUpdated)
@@ -76,7 +87,7 @@ function df_youtube(pageUpdated)
 		footer.style.setProperty('display', 'block', 'important');
 	}
 
-	if (theaterButton)
+	if (theaterButton && options.active)
 	{
 		setTimeout(function() {
 			fire_event(theaterButton, 'click');
@@ -129,17 +140,18 @@ function set_background(show)
 }
 function set_hide_feed(hide)
 {
-	var feed = document.querySelector('#feed');
 	//HIDE IN DF_YOUTUBE_COMMON.CSS TO PREVENT FLASHING
-	if (hide && feed)
+	if (hide)
 	{
-		// add_css('hide_feed.css');
-		feed.style.setProperty('display', 'none', 'important');
+		remove_css('show_feed.css');
+		// feed.style.setProperty('display', 'none', 'important');
 	}
-	else if (feed)
+	
+	else
 	{
-		// remove_css('hide_feed.css');
-		feed.style.setProperty('display', 'block', 'important');
+		add_css('show_feed.css');
+		console.log('should expose feed');
+		// feed.style.setProperty('display', 'block', 'important');
 	}
 }
 
