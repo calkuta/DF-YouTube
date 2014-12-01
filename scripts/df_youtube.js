@@ -57,6 +57,7 @@ function df_youtube(pageUpdated)
 		add_css('df_youtube.css');
 		set_hide_feed(options.visibility.hideFeed);
 		set_hide_sidebar(options.visibility.hideSidebar, options.visibility.hidePlaylist);
+		set_hide_comments(options.visibility.hideComments);
 		set_hide_related(options.visibility.hideRelated);
 		set_background(document.URL === "https://www.youtube.com/");
 	}
@@ -69,6 +70,7 @@ function df_youtube(pageUpdated)
 	}
 	
 	var content = document.querySelector('#watch7-container'),
+		comments = document.querySelector('#watch-discussion'),
 		footer = document.querySelector('#footer-container'),
 		theaterButton = document.querySelector('div[aria-label="Theater mode"]');
 
@@ -173,6 +175,18 @@ function set_hide_sidebar(hide, hidePlaylist)
 	else
 	{
 		remove_css('expand_content.css');
+	}
+}
+
+function set_hide_comments(hide)
+{
+	if (hide)
+	{
+		add_css('hide_comments.css');
+	}
+	else
+	{
+		remove_css('hide_comments.css');
 	}
 }
 

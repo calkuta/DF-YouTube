@@ -4,6 +4,7 @@ var defaultOptions = {
 			hideFeed: true,
 			hideSidebar: true,
 			hideRelated: true,
+			hideComments: false,
 			hidePlaylist: false,
 		},
 		disablePlaylists: false,
@@ -88,20 +89,38 @@ function load_options(callback)
 		{
 			options = data.dfYoutubeOptions;
 
-			for (var option in defaultOptions)
-			{
-				if (!data.dfYoutubeOptions.hasOwnProperty(option))
-				{
-					options = defaultOptions;
-					break;
-				}
-			}
+			check_options(defaultOptions, data.dfYoutubeOptions);
 		}
 
 		set_icon(options.active);
 
 		callback(options);
 	});
+}
+
+function check_options(defaultSet, comparisonSet)
+{
+	for (var option in defaultSet)
+	{
+		if (defaultSet.hasOwnProperty(option))
+		{
+			console.log(option);
+			console.log(typeof defaultSet[option]);
+
+		 	if (!comparisonSet.hasOwnProperty(option))
+		 	{
+				console.log('option ' + option + ' not found');
+				options = defaultOptions;
+				break;
+			}
+
+			if (typeof defaultSet[option] === 'object')
+			{
+				console.log('calling with ' + option);
+				check_options(defaultSet[option], comparisonSet[option]);
+			}
+		}
+	}
 }
 
 function broadcast_options(tabID)

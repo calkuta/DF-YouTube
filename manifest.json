@@ -3,7 +3,7 @@
 
 	"name": "DF YouTube (Distraction Free)",
 	"description": "Allow yourself to focus while using YouTube for work, recreation or education.",
-	"version": "0.1.8",
+	"version": "0.2.1",
 	"short_name": "DF YouTube",
 
 	"permissions": [

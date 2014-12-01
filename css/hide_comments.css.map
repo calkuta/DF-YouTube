@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,iBAAkB;EACjB,OAAO,EAAE,eAAe",
+"sources": ["hide_comments.scss"],
+"names": [],
+"file": "hide_comments.css"
+}
