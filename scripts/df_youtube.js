@@ -33,8 +33,8 @@ function initiate(pageUpdated)
 
 	setTimeout(function() {
 		checkReady = setInterval(function() {
-			if (document.readyState === 'complete' &&
-				body.className.search('page-loaded') >= 0 ||
+			if ((document.readyState === 'complete' &&
+				body.className.search('page-loaded') >= 0) ||
 				time > 3000
 			)
 			{
@@ -68,26 +68,20 @@ function df_youtube(pageUpdated)
 		set_hide_sidebar(false, false);
 		set_hide_related(false);
 	}
+
+	setTimeout(function() {
+		add_css('show_content.css');
+	}, 500);
 	
 	var content = document.querySelector('#watch7-container'),
 		comments = document.querySelector('#watch-discussion'),
 		footer = document.querySelector('#footer-container'),
 		theaterButton = document.querySelector('div[aria-label="Theater mode"]');
 
-	if (content)
-	{
-		content.style.setProperty('display', 'block', 'important');
-		footer.style.setProperty('display', 'block', 'important');
-
-		setTimeout(function() {
-			content.style.opacity = '1.0';
-			footer.style.opacity = '1.0';
-		}, 100);
-	}
-	else
-	{
-		footer.style.setProperty('display', 'block', 'important');
-	}
+	setTimeout(function() {
+		if (content) {content.style.opacity = '1.0';}
+		if (footer) {footer.style.opacity = '1.0';}
+	}, 1000);
 
 	if (theaterButton && options.active)
 	{
@@ -152,7 +146,6 @@ function set_hide_feed(hide)
 	else
 	{
 		add_css('show_feed.css');
-		console.log('should expose feed');
 		// feed.style.setProperty('display', 'block', 'important');
 	}
 }
@@ -209,12 +202,12 @@ function add_css(file)
 
 	if (checkLink === null)
 	{
-		link = document.createElement( "link" );
+		link = document.createElement("link");
 		link.href = chrome.extension.getURL("css/" + file);
 		link.type = "text/css";
 		link.rel = "stylesheet";
 		link.media = "screen,print";
-		document.getElementsByTagName( "head" )[0].appendChild( link );
+		document.getElementsByTagName("head")[0].appendChild(link);
 	}
 
 }

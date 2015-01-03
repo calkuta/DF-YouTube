@@ -6,7 +6,7 @@
 .watch-content {
 	width: 854px !important;
 }
-#watch7-main, #watch7-container {
+#watch7-main, #watch7-container, #watch7-content {
 	width: 854px !important;
 	min-width: 854px !important;
 	max-width: 854px !important;

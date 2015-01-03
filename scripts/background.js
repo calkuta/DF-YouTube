@@ -11,7 +11,8 @@ var defaultOptions = {
 		applyInstantly: true
 	},
 	options,
-	optionsLoaded = false;
+	optionsLoaded = false,
+	devMode = false;
 
 load_options();
 
@@ -87,9 +88,7 @@ function load_options(callback)
 		}
 		else
 		{
-			options = data.dfYoutubeOptions;
-
-			check_options(defaultOptions, data.dfYoutubeOptions);
+			options = align_objects(defaultOptions, data.dfYoutubeOptions);
 		}
 
 		set_icon(options.active);
@@ -98,29 +97,51 @@ function load_options(callback)
 	});
 }
 
-function check_options(defaultSet, comparisonSet)
+function align_objects(defaultObject, comparisonObject, useTrim)
 {
-	for (var option in defaultSet)
-	{
-		if (defaultSet.hasOwnProperty(option))
-		{
-			console.log(option);
-			console.log(typeof defaultSet[option]);
+	// method - use 'combine' to add missing properties or 'reset' to reset to the defaultObject
+	// useTrim - whether to delete any extra properties
 
-		 	if (!comparisonSet.hasOwnProperty(option))
+	useTrim = typeof useTrim === 'undefined' ? true : useTrim;
+
+	var prop;
+
+	for (prop in defaultObject)
+	{
+		if (defaultObject.hasOwnProperty(prop))
+		{
+		 	if (!comparisonObject.hasOwnProperty(prop))
 		 	{
-				console.log('option ' + option + ' not found');
-				options = defaultOptions;
-				break;
+				if (window.devMode)
+				{
+					console.log('comparee prop ' + prop + ' not found');
+				}
+
+				comparisonObject[prop] = defaultObject[prop];
 			}
 
-			if (typeof defaultSet[option] === 'object')
+			if (typeof defaultObject[prop] === 'object')
 			{
-				console.log('calling with ' + option);
-				check_options(defaultSet[option], comparisonSet[option]);
+				align_objects(defaultObject[prop], comparisonObject[prop], 'combine', true);
 			}
 		}
 	}
+
+	if (useTrim)
+	{
+		for (prop in comparisonObject)
+		{
+			if (comparisonObject.hasOwnProperty(prop))
+			{
+				if (!defaultObject.hasOwnProperty(prop))
+				{
+					delete comparisonObject[prop];
+				}
+			}
+		}
+	}
+
+	return comparisonObject;
 }
 
 function broadcast_options(tabID)
