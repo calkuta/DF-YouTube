@@ -1,5 +1,5 @@
 //listen for exclude domain addition
-window.devMode = true;
+window.devMode = false;
 
 var thumbs = true;
 var excludeDomains;

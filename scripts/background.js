@@ -1,3 +1,4 @@
+window.devMode = false;
 var defaultOptions = {
 		active: true,
 		visibility: {
@@ -11,8 +12,7 @@ var defaultOptions = {
 		applyInstantly: true
 	},
 	options,
-	optionsLoaded = false,
-	devMode = false;
+	optionsLoaded = false;
 
 load_options();
 

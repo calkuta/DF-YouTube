@@ -1,3 +1,4 @@
+window.devMode = false;
 //ajax form
 (function( $ ) { //operates on a form
 
