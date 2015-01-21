@@ -36,7 +36,6 @@ function initiate(pageUpdated)
 				document.body.className.search('page-loaded') > -1 &&
 				document.querySelector('#progress') === null)
 			{
-				console.log('starting up');
 				clearInterval(checkReady);
 				df_youtube(pageUpdated);
 			}
@@ -47,6 +46,8 @@ function initiate(pageUpdated)
 
 function df_youtube(pageUpdated)
 {
+	var contentTimeout = 500; //milliseconds
+
 	if (options.active)
 	{
 		add_css('df_youtube.css');
@@ -58,6 +59,7 @@ function df_youtube(pageUpdated)
 	}
 	else
 	{
+		contentTimeout = 0;
 		remove_css('df_youtube.css');
 		set_hide_feed(false);
 		set_hide_sidebar(false, false);
@@ -66,7 +68,7 @@ function df_youtube(pageUpdated)
 
 	setTimeout(function() {
 		add_css('show_content.css');
-	}, 500);
+	}, contentTimeout);
 	
 	var content = document.querySelector('#watch7-container'),
 		comments = document.querySelector('#watch-discussion'),
@@ -76,10 +78,10 @@ function df_youtube(pageUpdated)
 	setTimeout(function() {
 		if (content) {content.style.opacity = '1.0';}
 		if (footer) {footer.style.opacity = '1.0';}
-	}, 1000);
+	}, contentTimeout * 2);
 
 	//activate theater mode
-	if (theaterButton && options.active)
+	if (theaterButton && options.active && options.theaterMode)
 	{
 		// setTimeout(function() {
 		// 	fire_event(theaterButton, 'click');
