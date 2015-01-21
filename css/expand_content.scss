@@ -1,0 +1,35 @@
+#content {
+	width: 854px !important;
+	min-width: 854px !important;
+	max-width: 854px !important;
+}
+.watch-content {
+	width: 854px !important;
+}
+#watch7-main, #watch7-container, #watch7-content {
+	width: 854px !important;
+	min-width: 854px !important;
+	max-width: 854px !important;
+	overflow: hidden;
+}
+#watch7-sidebar-playlist {
+	display: none !important;
+}
+@media screen and (min-height: 870px) and (min-width: 1320px) {
+	.watch-stage-mode {
+		#content.content-alignment {
+			width: 950px !important;
+			min-width: 950px !important;
+			max-width: 950px !important;
+		}
+		.watch-content {
+			width: 950px !important;
+		}
+		#watch7-main, #watch7-container, #watch7-content {
+			width: 950px !important;
+			min-width: 950px !important;
+			max-width: 950px !important;
+			overflow: hidden;
+		}
+	}
+}

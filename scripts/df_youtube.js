@@ -27,25 +27,20 @@ function initiate(pageUpdated)
 {
 	pageUpdated = typeof pageUpdated === 'undefined' ? false : pageUpdated;
 
-	var timeInterval = 500,
-		time = 0,
+	var timeInterval = 750,
 		body = document.querySelector('body');
 
 	setTimeout(function() {
 		checkReady = setInterval(function() {
-			if ((document.readyState === 'complete' &&
-				body.className.search('page-loaded') >= 0) ||
-				time > 3000
-			)
+			if (document.readyState === 'complete' && 
+				document.body.className.search('page-loaded') > -1 &&
+				document.querySelector('#progress') === null)
 			{
 				console.log('starting up');
 				clearInterval(checkReady);
 				df_youtube(pageUpdated);
 			}
-			else
-			{
-				time += timeInterval;
-			}
+			
 		}, timeInterval);
 	}, timeInterval);
 }
@@ -83,11 +78,12 @@ function df_youtube(pageUpdated)
 		if (footer) {footer.style.opacity = '1.0';}
 	}, 1000);
 
+	//activate theater mode
 	if (theaterButton && options.active)
 	{
-		setTimeout(function() {
-			fire_event(theaterButton, 'click');
-		}, 2000);
+		// setTimeout(function() {
+		// 	fire_event(theaterButton, 'click');
+		// }, 2000);
 	}
 
 	// PLAYLISTS
