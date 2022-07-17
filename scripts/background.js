@@ -1,23 +1,16 @@
 window.devMode = false;
-var defaultOptions = {
-		active: true,
-		visibility: {
-			hideFeed: true,
-			hideSidebar: true,
-			hideRelated: true,
-			hideComments: false,
-			hidePlaylist: false,
-		},
-		disablePlaylists: false,
-		applyInstantly: true
-	},
-	options,
+var options,
 	optionsLoaded = false;
 
 load_options();
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
+	console.log(tabId)
 	console.log(changeInfo);
+
+	if (options.active && options.visibility.hideFeed)
+		chrome.tabs.insertCSS(tabId, {file:'css/prehide_feed.css', runAt:"document_start"}); //
+
 	if (typeof changeInfo.url !== 'undefined')
 	{
 		chrome.tabs.sendMessage(tabId, {
@@ -29,7 +22,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
 });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-
 	if (request.query === 'get options')
 	{
 		if (optionsLoaded)
@@ -49,7 +41,21 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	else if (request.query === 'set active')
 	{
 		options.active = request.active;
-		set_icon(request.active);
+		set_icon(request.active ? 'active' : 'inactive');
+		broadcast_options();
+		save_options();
+	}
+
+	else if (request.query === 'set alert')
+	{
+		options.alert = request.alert;
+		if (request.alert)
+		{
+			set_icon('alert');
+		} else
+		{
+			set_icon(options.active ? 'active' : 'inactive');
+		}
 		broadcast_options();
 		save_options();
 	}
@@ -69,38 +75,65 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	}
 });
 
-function load_options(callback)
-{
+function get_default_options() {
+	return {
+		active: true,
+		disableAutoplay: true,
+		alert: false,
+		visibility: {
+			hideNotificationBell: false,
+			hideRecommended: false,
+			hideFeed: false,
+			hideSidebar: true,
+			hideSubBar: false,
+			hideRelated: true,
+			hideComments: false,
+			hidePlaylist: false,
+			hideLiveChat: false,
+			hideTrending: false,
+			hideMerch: false,
+			hideNonLists: false
+		},
+		disablePlaylists: false,
+		applyInstantly: true
+	};
+}
+
+function load_options(callback) {
 	if (typeof callback === 'undefined')
 	{
 		callback = function() {};
 	}
 
-	chrome.storage.sync.get('dfYoutubeOptions', function(data) {
+	chrome.storage.sync.get(['dfYoutubeOptions'], function(data) {
 		
 		optionsLoaded = true;
 
 		if (typeof data.dfYoutubeOptions === 'undefined')
 		{
-			options = defaultOptions;
+			options = get_default_options();
 
 			save_options();
 		}
 		else
 		{
-			options = align_objects(defaultOptions, data.dfYoutubeOptions);
+			options = align_objects(get_default_options(), data.dfYoutubeOptions);
 		}
 
-		set_icon(options.active);
+		if (options.alert)
+			set_icon('alert');
+		else
+			set_icon(options.active ? 'active' : 'inactive');
 
 		callback(options);
 	});
 }
 
-function align_objects(defaultObject, comparisonObject, useTrim)
-{
+function align_objects(defaultObject, comparisonObject, useTrim) {
 	// method - use 'combine' to add missing properties or 'reset' to reset to the defaultObject
 	// useTrim - whether to delete any extra properties
+	if (typeof comparisonObject === 'undefined')
+		return defaultObject;
 
 	useTrim = typeof useTrim === 'undefined' ? true : useTrim;
 
@@ -144,8 +177,7 @@ function align_objects(defaultObject, comparisonObject, useTrim)
 	return comparisonObject;
 }
 
-function broadcast_options(tabID)
-{
+function broadcast_options(tabID) {
 	if (typeof tabID !== 'undefined')
 	{
 		order_update_view(tabID);
@@ -162,30 +194,35 @@ function broadcast_options(tabID)
 
 	function order_update_view(tabID)
 	{
-		chrome.tabs.sendMessage(tabID, {
-			query: 'update view',
-			options: options
-		});
+		if (tabID > 0)
+			chrome.tabs.sendMessage(tabID, {
+				query: 'update view',
+				options: options
+			});
 	}
 }
 
-function save_options()
-{
+function save_options() {
 	chrome.storage.sync.set({dfYoutubeOptions: options});
 }
 
-function set_icon(isActive)
-{
-	if (isActive)
+function set_icon(icon) {
+	if (icon == 'active')
 	{
 		chrome.browserAction.setIcon({
 			path: "images/df_youtube_icon_active_32.png",
 		});
 	}
-	else
+	else if (icon == 'inactive')
 	{
 		chrome.browserAction.setIcon({
 			path: "images/df_youtube_icon_inactive_32.png",
+		});
+	}
+	else if (icon == 'alert')
+	{
+		chrome.browserAction.setIcon({
+			path: "images/df_youtube_icon_alert_32.png",
 		});
 	}
 }

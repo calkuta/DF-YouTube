@@ -1,0 +1,5 @@
+#feed .section-list > li:first-child, ytd-browse ytd-item-section-renderer:first-child {
+  display: none;
+}
+
+/*# sourceMappingURL=hide_recommended.css.map */

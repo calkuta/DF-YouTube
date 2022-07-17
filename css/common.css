@@ -152,7 +152,8 @@ a, a:hover {
   color: white;
   text-decoration: none;
   font-family: 'Source Sans Pro', sans-serif;
-  cursor: pointer; }
+  cursor: pointer;
+  border-radius: 0.35em; }
   .greenButton:hover, .redButton:hover, .prettyBlueButton:hover {
     text-decoration: none; }
 
@@ -211,3 +212,6 @@ a, a:hover {
   user-select: none; }
 
 /*# sourceMappingURL=common.css.map */
+.purple {
+  color: purple;
+}
