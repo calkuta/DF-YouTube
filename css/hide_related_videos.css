@@ -1,3 +1,7 @@
 .ytp-endscreen-content {
 	display: none !important;
 }
+
+.ytp-ce-video {
+	display: none !important;
+}

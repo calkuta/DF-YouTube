@@ -9,15 +9,17 @@ window.devMode = false;
 		{
 			throw "ajaxForm requires a single element";
 		}
-
+		
+		var message = $('.message', $this)
+		
 		//optional argument defaults
-		var args = {
+		var defaults = {
 			submitURL: null,                 //REQUIRED - url to submit form to
 
 			submitClass: 'submit',           //optional - class of submit button(s)
 			extraFields: [],                 //optional - additional selectors to serialize
 			extraData:                       //optional - function that provides additional data appended to request
-				function($this){return '';},
+				function($this){return {};},
 			submitCallback:                  //optional - function to call when submitting form
 				function($this){return true;},
 			completeCallback:                //optional - function to call when submission is complete
@@ -25,8 +27,11 @@ window.devMode = false;
 			successCallback:                 //optional - function to call when submission has no error
 				function($this, response){},
 			failCallback:                    //optional - function to call when response parse fails
-				function($this){},
-			method: 'post',                  //optional - post or get
+				function($this, xhr){
+					message.addClass(args.errorClass);
+					message.html('Error - please try again.');
+				},
+			method: 'POST',                  //optional - POST or GET
 			submitImmediately: false,        //optional - immediately submit form as is
 			dataType: 'text',                //optional - response data type
 			timeout: 10000,                  //optional - ajax timeout
@@ -47,19 +52,17 @@ window.devMode = false;
 			clearPassword: true,             //optional - clear out password fields
 			clearErrorsOnChange: true,       //optional - clear error class on inputs when they are changed
 			clearFormOnSuccess: false,       //optional - clear form inputs on success
-			appendIsLegit: true              //optional - append isLegit variable to submission
+			appendIsLegit: true,             //optional - append isLegit variable to submission
+			beforeSend: function(req) {}
 		};
 
 		//GET FIELDS AND ATTRIBUTES
-		var message = $('.message', $this),
-			pwField = $('input[type=password]', $this),
+		var pwField = $('input[type=password]', $this),
 			formFields = $('input, textarea', $this),
 			formData,
-			submitButton = $this.find('.' + args.submitClass),
+			submitButton = $this.find('.' + defaults.submitClass),
 			submitEnabled = true,
 			inputs = $this.find('input[type=text], input[type=password], textarea');
-
-		console.log(inputs);
 
 		construct();
 
@@ -68,13 +71,13 @@ window.devMode = false;
 			//check input arguments
 			for (var argument in options)
 			{
-				if (typeof args[argument] === 'undefined' && window.devMode)
+				if (typeof defaults[argument] === 'undefined' && window.devMode)
 				{
 					console.log('Incorrect argument to ajaxForm: ' + argument);
 				}
 			}
 
-			args = $.extend(args, options);
+			args = $.extend(defaults, options);
 
 			//stop normal form submission
 			$this.submit(function(e) {
@@ -148,30 +151,25 @@ window.devMode = false;
 				success: function(response) {
 					on_complete(response);
 				},
-				error: function() {
-					on_fail();
-				}
+				error: function(xhr, textStatus, errorThrown) {
+					console.log(textStatus + " | " + errorThrown);
+					console.log(xhr.responseText);
+					on_fail(xhr);
+				},
+				beforeSend: args.beforeSend,
+				method: args.method
 			};
 
-			switch(args.method) {
-				case 'post':
-					ajaxArgs.type = 'POST';
-					$.ajax(ajaxArgs);
-					break;
-
-				case 'get':
-					ajaxArgs.type = 'GET';
-					$.ajax(ajaxArgs);
-					break;
-
-				default:
-					break;
-			}
+			$.ajax(ajaxArgs);
 		}
 
 		//on start
 		function start_submit() {
-			formData = $this.find(':input').serialize() + '&' + $(args.extraFields).serialize() + '&' + args.extraData($this) + '&isLegit=1';
+			var extraData = args.extraData($this);
+			formData = $this.find(':input').serialize() + '&' +
+				$(args.extraFields).serialize() + '&' +
+				typeof extraData === 'string' ? extraData : $.param(extraData) + '&' +
+				'&isLegit=1';
 
 			if (args.disableSubmit)
 			{
@@ -184,7 +182,7 @@ window.devMode = false;
 
 			hide_errors();
 			
-			if (args.submitCallback($this) === false)
+			if (args.submitCallback($this, formData) === false)
 			{
 				enable_form();
 				enable_submit();
@@ -284,19 +282,17 @@ window.devMode = false;
 			else
 			{
 				args.completeCallback($this);
-				args.failCallback($this);
+				args.failCallback($this, response);
 				enable_form();
 				enable_submit();
 				message.addClass(args.errorClass);
-				message.html('Error - please try again.');
+				message.html('Error - please try again');
 			}
 		}
 
 		//on failure
-		function on_fail() {
-			on_complete();
-			message.addClass(args.errorClass);
-			message.html('Error - please try again.');
+		function on_fail(xhr) {
+			args.failCallback($this, xhr);
 			
 			enable_submit();
 			enable_form();

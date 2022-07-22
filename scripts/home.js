@@ -8,12 +8,15 @@ $(document).ready(function() {
 	chrome.runtime.sendMessage({query: 'get options'}, function(response) {
 		options = response.options;
 		display_home(response.options);
+		if (options.alert)
+			$('.options').removeClass('hidden');
+		else
+			$('.boxed').removeClass('boxed');
+	});
 
-		// //show refresh advice
-		// if (!response.options.applyInstantly)
-		// {
-		// 	$('.refresh').show();
-		// }
+	chrome.runtime.sendMessage({
+		query: 'set alert',
+		alert: false
 	});
 
 	set_listeners();
@@ -41,15 +44,26 @@ function display_home(options)
 		}
 	}
 
-	if (!options.applyInstantly)
+	for (var prop in options)
 	{
-		$('.option[data-option=applyInstantly]').removeClass('checked');
+		if (options.hasOwnProperty(prop))
+		{
+			if (options[prop] === false)
+			{
+				$('.option[data-option=' + prop + ']').removeClass('checked');
+			}
+		}
 	}
 
-	if (!options.disablePlaylists)
-	{
-		$('.option[data-option=disablePlaylists]').removeClass('checked');
-	}
+	// if (!options.applyInstantly)
+	// {
+	// 	$('.option[data-option=applyInstantly]').removeClass('checked');
+	// }
+
+	// if (!options.disablePlaylists)
+	// {
+	// 	$('.option[data-option=disablePlaylists]').removeClass('checked');
+	// }
 
 	content.show();
 }
@@ -70,6 +84,12 @@ function set_listeners()
 		set_visibility($this.attr('data-option'), !$this.hasClass('checked'));
 		$this.toggleClass('checked');
 	});
+	
+	$('.option[data-option=hideRelated]').on('click', function() {
+		$this = $(this);
+		set_option($this);
+		$this.toggleClass('checked');
+	});
 
 	$('.option[data-option=applyInstantly]').on('click', function() {
 		set_option($(this));
@@ -85,6 +105,10 @@ function set_listeners()
 	});
 
 	$('.option[data-option=disablePlaylists]').on('click', function() {
+		set_option($(this));
+	});
+
+	$('.option[data-option=disableAutoplay]').on('click', function() {
 		set_option($(this));
 	});
 

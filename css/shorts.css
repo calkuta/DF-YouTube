@@ -1,0 +1,11 @@
+ytd-guide-section-renderer:nth-child(1) #items>ytd-guide-entry-renderer:nth-child(3) {
+	display: none;
+}
+
+#appbar-nav li:nth-child(3) {
+	display: none !important;
+}
+
+ytd-mini-guide-renderer #items ytd-mini-guide-entry-renderer:nth-child(3) {
+	display: none !important;
+}

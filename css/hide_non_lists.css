@@ -1,0 +1,3 @@
+ytd-guide-section-renderer:nth-child(n+2) {
+	display: none !important;
+}

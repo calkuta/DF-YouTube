@@ -1,3 +1,9 @@
+body {
+  margin: 0 auto; }
+  body.showOpts {
+    overflow-x: hidden;
+    margin-right: 1rem; }
+
 .setActive {
   text-align: center; }
   .setActive span {
@@ -16,8 +22,6 @@
 
 .toggleOptions {
   cursor: pointer; }
-  .toggleOptions span {
-    font-family: "Courier New", Courier, monospace; }
 
 .leaveFeedback {
   font-size: 1.2rem; }
@@ -40,6 +44,8 @@
     cursor: pointer; }
     .options .option[data-option=disablePlaylists] {
       margin-bottom: 0; }
+    .options .option[data-option=applyInstantly] {
+      margin-bottom: 0; }
     .options .option > .checkBox:before {
       content: "\e600"; }
     .options .option .subOption {
@@ -50,8 +56,18 @@
         margin-bottom: 0; }
     .options .option.checked .subOption {
       display: block; }
+    .options .option.checked .subOption.showParentOff {
+      display: none; }
+    .options .option.checked .subOption.showAlways {
+      display: block; }
     .options .option.checked > .checkBox:before {
       content: "\e601"; }
+    .options .option .subOption.showParentOff {
+      display: block; }
+    .options .option .subOption.showAlways {
+      display: block; }
+    .options .option.boxed {
+      border: 2px solid red; }
   .options .subOption {
     margin-left: 2rem; }
   .options .checkBox {

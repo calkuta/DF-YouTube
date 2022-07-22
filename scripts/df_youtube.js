@@ -1,299 +1,419 @@
+/*
+	Differences vs. Firefox - refreshFeed commented out
+*/
+
 var links = {
-		nodes: [],
-		hrefs: []
-	},
-	options;
+    nodes: [],
+    hrefs: [],
+  },
+  options,
+  expandContent = false,
+  expandContentTimeout = null,
+  refreshFeed = false;
 
-chrome.runtime.sendMessage({query: 'get options'}, function(response) {
-	options = response.options;
-	initiate();
+console.log("DF Tube script");
+chrome.runtime.sendMessage({ query: "get options" }, function (response) {
+  options = response.options;
+  refreshFeed = options.active && options.visibility.hideFeed;
+  initiate();
 });
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	if (request.query === 'update view')
-	{
-		options = request.options;
-		initiate();
-	}
-
-	else if (request.query === 'page updated')
-	{
-		options = request.options;
-		initiate(true);
-	}
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.query === "update view") {
+    options = request.options;
+    initiate();
+  } else if (request.query === "page updated") {
+    options = request.options;
+    initiate();
+  }
 });
 
-function initiate(pageUpdated)
-{
-	pageUpdated = typeof pageUpdated === 'undefined' ? false : pageUpdated;
+function initiate() {
+  console.log("initiating DF Tube");
+  document.getElementsByTagName("html")[0].style.display = "";
+  if (options.active) {
+    set_process_page_timer();
+    activate_df_youtube();
+  } else {
+    deactivate_df_youtube();
+  }
 
-	var timeInterval = 750,
-		body = document.querySelector('body');
-
-	setTimeout(function() {
-		checkReady = setInterval(function() {
-			if (document.readyState === 'complete' && 
-				document.body.className.search('page-loaded') > -1 &&
-				document.querySelector('#progress') === null)
-			{
-				clearInterval(checkReady);
-				df_youtube(pageUpdated);
-			}
-			
-		}, timeInterval);
-	}, timeInterval);
+  window.addEventListener("resize", function () {
+    expand_content();
+  });
 }
 
-function df_youtube(pageUpdated)
-{
-	var contentTimeout = 500; //milliseconds
+function set_process_page_timer() {
+  pageUpdated = typeof pageUpdated === "undefined" ? false : pageUpdated;
+  var timeInterval = 250;
+  setTimeout(function () {
+    if (options.hideFeed) add_css("hide_browse.css");
 
-	if (options.active)
-	{
-		add_css('df_youtube.css');
-		set_hide_feed(options.visibility.hideFeed);
-		set_hide_sidebar(options.visibility.hideSidebar, options.visibility.hidePlaylist);
-		set_hide_comments(options.visibility.hideComments);
-		set_hide_related(options.visibility.hideRelated);
-		set_background(document.URL === "https://www.youtube.com/");
-	}
-	else
-	{
-		contentTimeout = 0;
-		remove_css('df_youtube.css');
-		set_hide_feed(false);
-		set_hide_sidebar(false, false);
-		set_hide_related(false);
-	}
+    if (options.visibility.hideFeed) {
+      if (document.URL === "https://www.youtube.com/") {
+        set_hide_feed(true, true);
+      }
+    }
 
-	setTimeout(function() {
-		add_css('show_content.css');
-	}, contentTimeout);
-	
-	var content = document.querySelector('#watch7-container'),
-		comments = document.querySelector('#watch-discussion'),
-		footer = document.querySelector('#footer-container'),
-		theaterButton = document.querySelector('div[aria-label="Theater mode"]');
-
-	setTimeout(function() {
-		if (content) {content.style.opacity = '1.0';}
-		if (footer) {footer.style.opacity = '1.0';}
-	}, contentTimeout * 2);
-
-	//activate theater mode
-	if (theaterButton && options.active && options.theaterMode)
-	{
-		// setTimeout(function() {
-		// 	fire_event(theaterButton, 'click');
-		// }, 2000);
-	}
-
-	// PLAYLISTS
-	if (options.disablePlaylists && options.active)
-	{
-		if (links.nodes.length === 0 || pageUpdated)
-		{
-			links.nodes = document.querySelectorAll('a');
-			links.hrefs = [];
-			links.hrefs[links.nodes.length - 1] = '';
-
-			for (var i = 0; i < links.nodes.length; i++)
-			{
-				links.hrefs[i] = links.nodes[i].href;
-				links.nodes[i].href = strip_playlist(links.nodes[i].href);
-			}
-		}
-	}
-	else
-	{
-		if (links.nodes.length > 0)
-		{
-			for (var i = 0; i < links.nodes.length; i++)
-			{
-				links.nodes[i].href = links.hrefs[i];
-			}
-
-			links = {
-				nodes: [],
-				hrefs: []
-			};
-		}
-	}
+    var progress = document.querySelector(
+      "yt-page-navigation-progress #progress"
+    );
+    var test1 =
+      document.readyState === "complete" && // old youtube
+      document.body.className.search("page-loaded") > -1 &&
+      progress === null;
+    var test2 =
+      document.readyState === "complete" && // new youtube
+      progress !== null &&
+      (progress.style.transform === "scaleX(1)" ||
+        progress.style.transform === "");
+    if (test1) {
+      remove_css("hide_browse");
+      process_page(pageUpdated);
+    } else if (test2) {
+      remove_css("hide_browse");
+      process_page(pageUpdated);
+    } else {
+      initiate();
+    }
+  }, timeInterval);
 }
 
-function set_background(show)
-{
-	if (show)
-	{
-		add_css('background.css');
-	}
-	else
-	{
-		remove_css('background.css');
-	}
-}
-function set_hide_feed(hide)
-{
-	//HIDE IN DF_YOUTUBE_COMMON.CSS TO PREVENT FLASHING
-	if (hide)
-	{
-		remove_css('show_feed.css');
-		// feed.style.setProperty('display', 'none', 'important');
-	}
-	
-	else
-	{
-		add_css('show_feed.css');
-		// feed.style.setProperty('display', 'block', 'important');
-	}
+function process_page(pageUpdated) {
+  if (options.active) {
+    // remove video ads
+    var ads = document.querySelectorAll("#video-masthead");
+    for (var i = 0; i < ads.length; i++) {
+      ads[i].parentElement.removeChild(ads[i]);
+    }
+
+    if (options.disableAutoplay) disable_autoplay();
+
+    playlists();
+    expand_content();
+  } else {
+    deactivate_df_youtube();
+  }
 }
 
-function set_hide_sidebar(hide, hidePlaylist)
-{
-	if (hide)
-	{
-		add_css('hide_sidebar_contents.css');
-	}
-	else
-	{
-		remove_css('hide_sidebar_contents.css');
-	}
-
-	if (document.URL.search('watch\\?v=') > 0 && hide && (hidePlaylist || document.URL.search('list=') === -1))
-	{
-		add_css('expand_content.css');
-	}
-	else
-	{
-		remove_css('expand_content.css');
-	}
+function deactivate_df_youtube() {
+  remove_css("df_youtube_common.css");
+  remove_css("df_youtube.css");
+  set_hide_feed(false, false);
+  set_hide_sidebar(false, false, false);
+  set_hide_subbar(false);
+  set_hide_comments(false);
+  set_hide_related(false);
+  set_hide_trending(false);
+  set_hide_merch(false);
+  set_hide_notification_bell(false);
+  set_hide_non_lists(false);
 }
 
-function set_hide_comments(hide)
-{
-	if (hide)
-	{
-		add_css('hide_comments.css');
-	}
-	else
-	{
-		remove_css('hide_comments.css');
-	}
+function activate_df_youtube() {
+  add_css("df_youtube_common.css");
+  add_css("df_youtube.css");
+  set_hide_feed(
+    options.visibility.hideFeed,
+    document.URL === "https://www.youtube.com/" &&
+      options.visibility.hideRecommended
+  );
+  set_hide_sidebar(
+    options.visibility.hideSidebar,
+    options.visibility.hidePlaylist,
+    options.visibility.hideLiveChat
+  );
+  set_hide_subbar(options.visibility.hideSubBar);
+  set_hide_comments(options.visibility.hideComments);
+  set_hide_home(options.visibility.hideHome);
+  set_hide_trending(options.visibility.hideTrending);
+  set_hide_shorts(options.visibility.hideShorts);
+  set_hide_related(options.visibility.hideRelated);
+  set_hide_merch(options.visibility.hideMerch);
+  set_hide_notification_bell(options.visibility.hideNotificationBell);
+  set_hide_non_lists(options.visibility.hideNonLists);
 }
 
-function set_hide_related(hide)
-{
-	if (hide)
-	{
-		add_css('hide_related_videos.css');
-	}
-	else
-	{
-		remove_css('hide_related_videos.css');
-	}
+function playlists() {
+  if (options.disablePlaylists && options.active) {
+    setTimeout(function () {
+      if (links.nodes.length === 0 || pageUpdated) {
+        links.nodes = document.querySelectorAll("a");
+        links.hrefs = [];
+        links.hrefs[links.nodes.length - 1] = "";
+
+        for (var i = 0; i < links.nodes.length; i++) {
+          links.hrefs[i] = links.nodes[i].href;
+          if (links.hrefs[i] !== "") {
+            links.nodes[i].href = strip_playlist(links.nodes[i].href);
+          }
+        }
+      }
+    }, 1500);
+  } else {
+    if (links.nodes.length > 0) {
+      for (var i = 0; i < links.nodes.length; i++) {
+        if (links.hrefs[i] !== "") links.nodes[i].href = links.hrefs[i];
+      }
+
+      links = {
+        nodes: [],
+        hrefs: [],
+      };
+    }
+  }
 }
 
-function add_css(file)
-{
-	var checkLink = document.querySelector('link[href="' + chrome.extension.getURL("css/" + file) + '"]'),
-		link;
+function disable_autoplay() {
+  setTimeout(function () {
+    var autoplay = document.getElementById("toggle");
+    if (autoplay == null) autoplay = document.getElementById("improved-toggle");
 
-	if (checkLink === null)
-	{
-		link = document.createElement("link");
-		link.href = chrome.extension.getURL("css/" + file);
-		link.type = "text/css";
-		link.rel = "stylesheet";
-		link.media = "screen,print";
-		document.getElementsByTagName("head")[0].appendChild(link);
-	}
-
+    if (autoplay != null) {
+      if (autoplay.getAttribute("active") !== null) {
+        autoplay.click();
+      }
+    }
+  }, 5000);
 }
 
-function remove_css(file)
-{
-	var link = document.querySelectorAll('link[href="' + chrome.extension.getURL("css/" + file) + '"]');
-
-	if (link.length > 0)
-	{
-		for (var i = 0; i < link.length; i++)
-		{
-			link[i].parentNode.removeChild(link[i]);
-		}
-	}
+function set_hide_home(hide) {
+  if (hide) {
+    add_css("home_tab.css");
+  } else {
+    remove_css("home_tab.css");
+  }
 }
 
-function disable_playlists()
-{
-	var links = document.querySelectorAll('a');
-
-	for (var i = 0; i < links.length; i++)
-	{
-		links[i].href = strip_playlist(links[i].href);
-	}
+function set_hide_trending(hide) {
+  if (hide) {
+    add_css("trending.css");
+  } else {
+    remove_css("trending.css");
+  }
 }
 
-function strip_playlist(href)
-{
-	listPos = href.search('&list=');
+function set_hide_shorts(hide) {
+  if (hide) {
+    add_css("shorts.css");
+  } else {
+    remove_css("shorts.css");
+  }
+}
 
-	if (listPos >= 0 && href.search('watch\\?v=') >= 0)
-	{
-		href = href.slice(0, listPos);
-	}
+function set_hide_feed(hideFeed, hideRecommended) {
+  //HIDE IN DF_YOUTUBE_COMMON.CSS TO PREVENT FLASHING
+  if (hideFeed) {
+    remove_css("show_feed.css");
+    add_css("hide_feed.css");
+    // feed.style.setProperty('display', 'none', 'important');
+  } else {
+    if (hideRecommended) {
+      document.querySelectorAll("span#title").forEach(function (item) {
+        var found = false;
+        if (!found && item.innerHTML == "Recommended") {
+          var contentNode = find_parent_by_class(
+            item,
+            "ytd-item-section-renderer"
+          );
 
-	return href;
+          if (contentNode.className.search("dfyoutube_hidden") == -1)
+            contentNode.className += " dfyoutube_hidden ";
+        }
+      });
+      // add_css('hide_recommended.css');
+    } else {
+      document
+        .querySelectorAll(".ytd-item-section-renderer")
+        .forEach(function (item) {
+          item.className = item.className.replace("dfyoutube_hidden", "");
+        });
+      // remove_css('hide_recommended.css');
+    }
+
+    // if (refreshFeed && document.URL == "https://www.youtube.com/") {
+    // 	window.location = window.location;
+    // 	return;
+    // }
+
+    remove_css("prehide_feed.css");
+    remove_css("hide_feed.css");
+    add_css("show_feed.css");
+  }
+}
+
+function set_hide_sidebar(hide, hidePlaylists, hideLiveChat) {
+  if (hide) {
+    add_css("hide_sidebar_contents.css");
+  } else {
+    remove_css("hide_sidebar_contents.css");
+  }
+
+  if (
+    (hidePlaylists || document.URL.search("list=") === -1) &&
+    (hideLiveChat || document.querySelector("ytd-live-chat-frame") == null)
+  ) {
+    add_css("hide_chat.css");
+    expandContent = true;
+  } else {
+    expandContent = false;
+    remove_css("hide_chat.css");
+  }
+}
+
+function expand_content(timeout) {
+  return;
+}
+
+function set_hide_subbar(hide) {
+  if (hide) {
+    add_css("hide_subbar.css");
+  } else {
+    remove_css("hide_subbar.css");
+  }
+}
+
+function set_hide_comments(hide) {
+  if (hide) {
+    add_css("hide_comments.css");
+  } else {
+    remove_css("hide_comments.css");
+  }
+}
+
+function set_hide_related(hide) {
+  if (hide) add_css("hide_related_videos.css");
+  else remove_css("hide_related_videos.css");
+}
+
+function set_hide_merch(hide) {
+  if (hide) add_css("hide_merch.css");
+  else remove_css("hide_merch.css");
+}
+
+function set_hide_notification_bell(hide) {
+  if (hide) {
+    document.title = document.title.replace(/ *\([0-9]+\)/, "");
+    add_css("hide_notification_bell.css");
+  } else remove_css("hide_notification_bell.css");
+}
+
+function set_hide_non_lists(hide) {
+  if (hide) add_css("hide_non_lists.css");
+  else remove_css("hide_non_lists.css");
+}
+
+function add_css(file) {
+  var checkLink = document.querySelector(
+      'link[href="' + chrome.extension.getURL("css/" + file) + '"]'
+    ),
+    link;
+
+  if (checkLink === null) {
+    link = document.createElement("link");
+    link.href = chrome.extension.getURL("css/" + file);
+    link.type = "text/css";
+    link.rel = "stylesheet";
+    link.media = "screen,print";
+    document.getElementsByTagName("head")[0].appendChild(link);
+  }
+}
+
+function remove_css(file) {
+  var link = document.querySelectorAll(
+    'link[href="' + chrome.extension.getURL("css/" + file) + '"]'
+  );
+
+  if (link.length > 0) {
+    for (var i = 0; i < link.length; i++) {
+      link[i].parentNode.removeChild(link[i]);
+    }
+  }
+}
+
+function disable_playlists() {
+  var links = document.querySelectorAll("a");
+
+  setTimeout(function () {
+    console.log("hello");
+    for (var i = 0; i < links.length; i++) {
+      links[i].href = strip_playlist(links[i].href);
+    }
+  }, 2500);
+}
+
+function strip_playlist(href) {
+  listPos = href.search("&list=");
+
+  if (listPos >= 0 && href.search("watch\\?v=") >= 0) {
+    href = href.slice(0, listPos);
+  }
+
+  return href;
 }
 
 function fire_event(node, eventName) {
-	// Make sure we use the ownerDocument from the provided node to avoid cross-window problems
-	var doc;
-	if (node.ownerDocument) {
-		doc = node.ownerDocument;
-	} else if (node.nodeType == 9){
-		// the node may be the document itself, nodeType 9 = DOCUMENT_NODE
-		doc = node;
-	} else {
-		throw new Error("Invalid node passed to fireEvent: " + node.id);
-	}
+  // Make sure we use the ownerDocument from the provided node to avoid cross-window problems
+  var doc;
+  if (node.ownerDocument) {
+    doc = node.ownerDocument;
+  } else if (node.nodeType == 9) {
+    // the node may be the document itself, nodeType 9 = DOCUMENT_NODE
+    doc = node;
+  } else {
+    throw new Error("Invalid node passed to fireEvent: " + node.id);
+  }
 
-	 if (node.dispatchEvent) {
-		// Gecko-style approach (now the standard) takes more work
-		var eventClass = "";
+  if (node.dispatchEvent) {
+    // Gecko-style approach (now the standard) takes more work
+    var eventClass = "";
 
-		// Different events have different event classes.
-		// If this switch statement can't map an eventName to an eventClass,
-		// the event firing is going to fail.
-		switch (eventName) {
-			case "click": // Dispatching of 'click' appears to not work correctly in Safari. Use 'mousedown' or 'mouseup' instead.
-			case "mousedown":
-			case "mouseup":
-				eventClass = "MouseEvents";
-				break;
+    // Different events have different event classes.
+    // If this switch statement can't map an eventName to an eventClass,
+    // the event firing is going to fail.
+    switch (eventName) {
+      case "click": // Dispatching of 'click' appears to not work correctly in Safari. Use 'mousedown' or 'mouseup' instead.
+      case "mousedown":
+      case "mouseup":
+        eventClass = "MouseEvents";
+        break;
 
-			case "focus":
-			case "change":
-			case "blur":
-			case "select":
-				eventClass = "HTMLEvents";
-				break;
+      case "focus":
+      case "change":
+      case "blur":
+      case "select":
+        eventClass = "HTMLEvents";
+        break;
 
-			default:
-				throw "fireEvent: Couldn't find an event class for event '" + eventName + "'.";
-				break;
-		}
-		var event = doc.createEvent(eventClass);
+      default:
+        throw (
+          "fireEvent: Couldn't find an event class for event '" +
+          eventName +
+          "'."
+        );
+    }
+    var event = doc.createEvent(eventClass);
 
-		var bubbles = eventName == "change" ? false : true;
-		event.initEvent(eventName, bubbles, true); // All events created as bubbling and cancelable.
+    var bubbles = eventName == "change" ? false : true;
+    event.initEvent(eventName, bubbles, true); // All events created as bubbling and cancelable.
 
-		event.synthetic = true; // allow detection of synthetic events
-		// The second parameter says go ahead with the default action
-		node.dispatchEvent(event, true);
-	} else  if (node.fireEvent) {
-		// IE-old school style
-		var event = doc.createEventObject();
-		event.synthetic = true; // allow detection of synthetic events
-		node.fireEvent("on" + eventName, event);
-	}
-};
+    event.synthetic = true; // allow detection of synthetic events
+    // The second parameter says go ahead with the default action
+    node.dispatchEvent(event, true);
+  } else if (node.fireEvent) {
+    // IE-old school style
+    var event = doc.createEventObject();
+    event.synthetic = true; // allow detection of synthetic events
+    node.fireEvent("on" + eventName, event);
+  }
+}
+
+function find_parent_by_class(node, className) {
+  var parent = node.parentNode;
+  while (parent != document) {
+    if (parent.className.search(className) >= 0) return parent;
+    parent = parent.parentNode;
+  }
+
+  return undefined;
+}

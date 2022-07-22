@@ -1,43 +1,75 @@
-#feed, #watch7-container, #watch7-sidebar-ads {
-  display: none; }
+.ad-div, .ad-overlay, #player-ads, #masthead-ad, #watch7-sidebar-ads, .ytp-ad-overlay-container {
+  display: none !important; }
 
-.ad-div {
-  display: none; }
-
-#player-api {
-  width: 854px;
-  height: 510px; }
-
-#player {
+.watch-non-stage-mode #theater-background {
   width: 854px !important;
-  min-width: 854px !important;
-  max-width: 854px !important; }
+  height: 480px !important; }
 
-#theater-background {
-  height: 510px !important;
+.watch-large #theater-background, .watch-stage-mode #theater-background {
   background-color: #000 !important; }
 
 @media screen and (min-height: 870px) and (min-width: 1320px) {
+  .watch-large #theater-background, .watch-stage-mode #theater-background {
+    height: 480px !important; }
+
+  #player-api {
+    width: 854px;
+    height: 480px; }
+
+  .watch-non-stage-mode #theater-background {
+    width: 854px !important;
+    height: 480px !important; }
+
   .watch-stage-mode #content {
-    min-width: 850px;
-    width: 850px; }
+    min-width: 854px;
+    width: 854px; }
   .watch-stage-mode #player-api {
     width: 1280px;
-    height: 750px; }
+    height: 720px; }
   .watch-stage-mode #player {
-    width: 1280px !important;
-    min-width: 1280px !important;
-    max-width: 1280px !important; }
+    width: auto !important;
+    max-width: none !important; }
+  .watch-stage-mode #theater-background, .watch-stage-mode #player-api, .watch-stage-mode .player-api {
+    height: 720px !important; }
   .watch-stage-mode #theater-background {
-    height: 750px !important; } }
-video {
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important; }
+    width: 100% !important; }
+  .watch-stage-mode .exp-watch-controls-overlay #player-api {
+    width: 1280px;
+    height: 720px; }
+  .watch-stage-mode .exp-watch-controls-overlay #theater-background, .watch-stage-mode .exp-watch-controls-overlay #player-api, .watch-stage-mode .exp-watch-controls-overlay .player-api {
+    height: 720px !important; } }
+@media screen and (min-height: 980px) and (min-width: 1720px) {
+  .watch-large #theater-background, .watch-stage-mode #theater-background {
+    height: 720px !important; }
 
-#watch7-sidebar {
-  margin-top: 10px !important;
+  #player-api {
+    width: 1280px;
+    height: 720px; }
+
+  .watch-non-stage-mode #theater-background {
+    width: 1280px !important;
+    height: 720px !important; }
+
+  .watch-stage-mode #content {
+    min-width: 1280px;
+    width: 1280px; }
+  .watch-stage-mode #player-api {
+    width: 1280px;
+    height: 720px; }
+  .watch-stage-mode #player {
+    width: auto !important;
+    max-width: none !important; }
+  .watch-stage-mode #theater-background, .watch-stage-mode #player-api, .watch-stage-mode .player-api {
+    height: 720px !important; }
+  .watch-stage-mode #theater-background {
+    width: 100% !important; }
+  .watch-stage-mode .exp-watch-controls-overlay #player-api {
+    width: 1280px;
+    height: 720px; }
+  .watch-stage-mode .exp-watch-controls-overlay #theater-background, .watch-stage-mode .exp-watch-controls-overlay #player-api, .watch-stage-mode .exp-watch-controls-overlay .player-api {
+    height: 720px !important; } }
+.watch-large #watch7-sidebar {
+  margin-top: 0 !important;
   top: 0 !important; }
 
 .ad-container-single-media-element {

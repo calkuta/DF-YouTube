@@ -1,7 +1,18 @@
 .leaveFeedback .submit {
-  width: 9rem;
-  display: block;
-  margin-left: auto;
-  margin-right: auto; }
+	cursor: pointer;
+	width: 9rem;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#tips {
+	color: red;
+	font-size: 14px;
+}
+
+#forceFeedback {
+	display: block;
+}
 
 /*# sourceMappingURL=leave_feedback.css.map */
