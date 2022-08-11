@@ -5,15 +5,22 @@
 	<link rel="stylesheet" type="text/css" href="css/common.css" />
 	<link rel="stylesheet" type="text/css" href="css/fonts.css" />
 	<link rel="stylesheet" type="text/css" href="css/leave_feedback.css" />
-	<script type="text/javascript" src="scripts/jquery.js"></script>
+	<script type="text/javascript" src="scripts/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="scripts/common.js"></script>
 	<script type="text/javascript" src="scripts/leave_feedback.js"></script>
 </head>
 
 <body>
-<div id="content" class="">
-	<h4 class="centerText">Your Feedback is Appreciated!</h4>
-	
+<div id="tips">
+	<div class="centerText"><b>DF YouTube not working??? Try these FIRST :)</b></div>
+	1) Refresh YouTube.  If that doesn't work, go to (2)<br><br>
+	2) Close all YouTube tabs, then go to your add-ons page from the menu, and disable, then re-enable DF YouTube.  If things don't look right, refresh the page.<br><br>
+	3) If (1) and (2) don't work, try removing DF YouTube, then reinstalling.  Just search Google for DF YouTube to find the install page (or add Firefox to the search).
+</div>
+
+<div id="forceFeedback" class="prettyBlueButton">I still want to leave feedback</div>
+
+<div id="content" class="hidden">
 	<form class="leaveFeedback">
 		<label for="name" class="">Name (optional)</label>
 		<input type="text" name="name" class="" id="name" />
@@ -22,13 +29,13 @@
 		<input type="text" name="email" class="" id="email" />
 
 		<label for="content" class="">Comments</label>
-		<textarea class="block" rows="8" name="content"></textarea>
+		<textarea id="messageContent" class="block" rows="8" name="content"></textarea>
 		<input class="prettyBlueButton submit" type="button" name="submit" id="submit" value="Submit" />
 		<div class="message"></div>
 	</form>
 
 	<div>
-		<a href="/home.html">Go Back</a>
+		<a href="/home.html">Back</a>
 	</div>
 
 </div>

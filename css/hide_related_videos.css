@@ -1,3 +1,15 @@
 .ytp-endscreen-content {
 	display: none !important;
 }
+
+.ytp-ce-video {
+	display: none !important;
+}
+
+#shorts-inner-container>ytd-reel-video-renderer:not(:first-child) {
+	display: none;
+}
+
+.navigation-container.style-scope.ytd-shorts {
+	display: none;
+}

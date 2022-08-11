@@ -1,13 +1,4 @@
-#feed, #watch7-container, #watch7-sidebar-ads {
+#watch7-sidebar-ads {
   display: none; }
-
-#watch7-container, #footer-container {
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
-  -ms-transform: translate3d(0, 0, 0);
-  -o-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  transition: opacity 0.5s linear;
-  opacity: 0; }
 
 /*# sourceMappingURL=df_youtube_common.css.map */

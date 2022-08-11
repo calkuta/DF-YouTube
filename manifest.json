@@ -1,13 +1,16 @@
 {
+"update_url": "https://clients2.google.com/service/update2/crx",
+
 	"manifest_version": 2,
 
-	"name": "DF YouTube (Distraction Free)",
-	"description": "Allow yourself to focus while using YouTube for work, recreation or education.",
-	"version": "1.0.2",
-	"short_name": "DF YouTube",
+	"name": "DF Tube (Distraction Free for YouTube™)",
+	"options_page": "home.html",
+	"description": "Allow yourself to focus while using YouTube™ for work, recreation or education.",
+	"version": "1.13.504",
+	"short_name": "DFTube",
 
 	"permissions": [
-		"http://www.nosarembo.com/*",
+		"https://api.mailgun.net/*",
 		"storage",
 		"tabs"
 	],
@@ -31,9 +34,9 @@
 
 	"content_scripts": [
 		{
-			"matches": ["http://youtu.be/*", "https://youtu.be/*", "http://youtube.com/*", "http://www.youtube.com/*", "https://www.youtube.com/*", "https://youtube.com/*"],
+			"matches": ["https://www.youtube.com/*", "https://www.youtube.com/?*", "https://www.youtube.com/watch*"],
 			"js": ["scripts/df_youtube.js"],
-			"css": ["css/df_youtube_common.css"]
+			"css": ["css/prehide_feed.css"]
 		}
 	],
 

@@ -1,0 +1,10 @@
+#appbar-guide-menu {
+  width: 0; }
+
+app-drawer#guide {
+  display: none !important; }
+
+ytd-mini-guide-renderer {
+  display: none !important; }
+
+/*# sourceMappingURL=hide_subbar.css.map */

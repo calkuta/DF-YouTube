@@ -1,31 +1,115 @@
-#content {
+#columns #secondary {
+  display: none; }
+
+.html5-video-container, .html5-main-video {
+  width: 100% !important;
+  height: 100% !important;
+  left: 0 !important; }
+
+.video-ads .ad-container {
+  top: 0; }
+
+.ytp-chrome-bottom {
+  width: 97% !important;
+  left: 1.5% !important; }
+
+#content ytd-watch:not([theater]) #top.ytd-watch {
+  width: auto !important; }
+
+#info, #comments, #meta {
+  padding-right: 0 !important; }
+
+ytd-playlist-panel-renderer {
+  display: none; }
+
+#page.watch #watch7-sidebar-playlist {
+  display: none !important; }
+#page.watch #watch7-main, #page.watch #watch7-container, #page.watch #watch7-content {
+  width: 640px !important;
+  min-width: 640px !important;
+  max-width: 640px !important;
+  overflow: hidden; }
+#page.watch #content {
+  width: 640px !important;
+  max-width: 640px !important;
+  min-width: 640px !important; }
+#page.watch #player {
+  width: 640px !important;
+  max-width: 640px !important;
+  min-width: 640px !important; }
+#page.watch.watch-stage-mode #content {
   width: 854px !important;
   min-width: 854px !important;
   max-width: 854px !important; }
-
-.watch-content {
+#page.watch.watch-stage-mode .watch-content {
   width: 854px !important; }
-
-#watch7-main, #watch7-container, #watch7-content {
+#page.watch.watch-stage-mode #watch7-main, #page.watch.watch-stage-mode #watch7-container, #page.watch.watch-stage-mode #watch7-content {
   width: 854px !important;
   min-width: 854px !important;
   max-width: 854px !important;
   overflow: hidden; }
+#page.watch.watch-stage-mode #player {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important; }
 
-#watch7-sidebar-playlist {
-  display: none !important; }
+@media screen and (min-height: 630px) and (min-width: 1294px) {
+  #page.watch #watch7-main, #page.watch #watch7-container, #page.watch #watch7-content, #page.watch.watch-stage-mode #watch7-main, #page.watch.watch-stage-mode #watch7-container, #page.watch.watch-stage-mode #watch7-content {
+    width: 854px !important;
+    min-width: 854px !important;
+    max-width: 854px !important;
+    overflow: hidden; }
+  #page.watch #content, #page.watch.watch-stage-mode #content {
+    width: 854px !important;
+    max-width: 854px !important;
+    min-width: 854px !important; }
 
+  #page.watch #player, #page.watch.watch-non-stage-mode #player {
+    width: 854px !important;
+    max-width: 854px !important;
+    min-width: 854px !important; } }
 @media screen and (min-height: 870px) and (min-width: 1320px) {
-  .watch-stage-mode #content.content-alignment {
+  #page.watch-stage-mode #content {
     width: 950px !important;
     min-width: 950px !important;
     max-width: 950px !important; }
-  .watch-stage-mode .watch-content {
+  #page.watch-stage-mode .watch-content {
     width: 950px !important; }
-  .watch-stage-mode #watch7-main, .watch-stage-mode #watch7-container, .watch-stage-mode #watch7-content {
+  #page.watch-stage-mode #watch7-main, #page.watch-stage-mode #watch7-container, #page.watch-stage-mode #watch7-content {
     width: 950px !important;
     min-width: 950px !important;
     max-width: 950px !important;
     overflow: hidden; } }
+@media screen and (min-height: 980px) and (min-width: 1720px) {
+  #page.watch-non-stage-mode #watch7-main, #page.watch-non-stage-mode #watch7-container, #page.watch-non-stage-mode #watch7-content {
+    width: 1280px !important;
+    min-width: 1280px !important;
+    max-width: 1280px !important;
+    overflow: hidden; }
+  #page.watch-non-stage-mode #content {
+    width: 1280px !important;
+    max-width: 1280px !important;
+    min-width: 1280px !important; }
+  #page.watch-non-stage-mode #player {
+    width: 1280px !important;
+    max-width: 1280px !important;
+    min-width: 1280px !important; }
+
+  #page.watch #content, #page.watch.watch-stage-mode #content {
+    width: 1280px !important;
+    min-width: 1280px !important;
+    max-width: 1280px !important; }
+  #page.watch .watch-content, #page.watch.watch-stage-mode .watch-content {
+    width: 1280px !important; }
+  #page.watch #watch7-main, #page.watch #watch7-container, #page.watch #watch7-content, #page.watch.watch-stage-mode #watch7-main, #page.watch.watch-stage-mode #watch7-container, #page.watch.watch-stage-mode #watch7-content {
+    width: 1280px !important;
+    min-width: 1280px !important;
+    max-width: 1280px !important;
+    overflow: hidden; }
+
+  #page.watch #player, #page.watch.watch-non-stage-mode #player {
+    width: 1280px !important;
+    max-width: 1280px !important;
+    min-width: 1280px !important; } }
 
 /*# sourceMappingURL=expand_content.css.map */
